@@ -229,7 +229,7 @@ const PlannerContent = ({
   return (
     <>
   {activeTab === 'dashboard' ? (
-  <PlannerIntroStrip activeTab={activeTab} />
+  <PlannerIntroStrip />
 ) : null}
 
   <CharacterTabs

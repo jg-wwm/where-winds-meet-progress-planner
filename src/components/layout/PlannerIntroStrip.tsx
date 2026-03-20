@@ -1,32 +1,4 @@
-import type { CSSProperties } from 'react'
-
-interface PlannerIntroStripProps {
-  activeTab: string
-}
-
-const stepStyle: CSSProperties = {
-  display: 'grid',
-  gridTemplateColumns: '32px 1fr',
-  gap: '10px',
-  alignItems: 'start',
-}
-
-const badgeStyle: CSSProperties = {
-  width: '32px',
-  height: '32px',
-  borderRadius: '999px',
-  display: 'grid',
-  placeItems: 'center',
-  fontWeight: 800,
-  color: '#18211d',
-  background: 'linear-gradient(180deg, var(--wwm-gold-soft) 0%, var(--wwm-gold) 100%)',
-}
-
-export const PlannerIntroStrip = ({
-  activeTab,
-}: PlannerIntroStripProps) => {
-  const isDashboard = activeTab === 'dashboard'
-
+export const PlannerIntroStrip = () => {
   return (
     <section
       style={{
@@ -101,23 +73,86 @@ export const PlannerIntroStrip = ({
               gap: '12px',
             }}
           >
-            <div style={stepStyle}>
-              <div style={badgeStyle}>1</div>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: '32px 1fr',
+                gap: '10px',
+                alignItems: 'start',
+              }}
+            >
+              <div
+                style={{
+                  width: '32px',
+                  height: '32px',
+                  borderRadius: '999px',
+                  display: 'grid',
+                  placeItems: 'center',
+                  fontWeight: 800,
+                  color: '#18211d',
+                  background:
+                    'linear-gradient(180deg, var(--wwm-gold-soft) 0%, var(--wwm-gold) 100%)',
+                }}
+              >
+                1
+              </div>
               <div style={{ color: 'rgba(248,245,238,0.9)', lineHeight: 1.6 }}>
                 Add a character or pick one from your existing roster.
               </div>
             </div>
 
-            <div style={stepStyle}>
-              <div style={badgeStyle}>2</div>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: '32px 1fr',
+                gap: '10px',
+                alignItems: 'start',
+              }}
+            >
+              <div
+                style={{
+                  width: '32px',
+                  height: '32px',
+                  borderRadius: '999px',
+                  display: 'grid',
+                  placeItems: 'center',
+                  fontWeight: 800,
+                  color: '#18211d',
+                  background:
+                    'linear-gradient(180deg, var(--wwm-gold-soft) 0%, var(--wwm-gold) 100%)',
+                }}
+              >
+                2
+              </div>
               <div style={{ color: 'rgba(248,245,238,0.9)', lineHeight: 1.6 }}>
                 In <strong>Setup</strong>, enter current skill tiers/ranks and
                 your inventory.
               </div>
             </div>
 
-            <div style={stepStyle}>
-              <div style={badgeStyle}>3</div>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: '32px 1fr',
+                gap: '10px',
+                alignItems: 'start',
+              }}
+            >
+              <div
+                style={{
+                  width: '32px',
+                  height: '32px',
+                  borderRadius: '999px',
+                  display: 'grid',
+                  placeItems: 'center',
+                  fontWeight: 800,
+                  color: '#18211d',
+                  background:
+                    'linear-gradient(180deg, var(--wwm-gold-soft) 0%, var(--wwm-gold) 100%)',
+                }}
+              >
+                3
+              </div>
               <div style={{ color: 'rgba(248,245,238,0.9)', lineHeight: 1.6 }}>
                 Open <strong>Planner</strong> to review material breakdown,
                 iron needs, and farming priorities.
@@ -127,17 +162,18 @@ export const PlannerIntroStrip = ({
         </div>
 
         <div
-  style={{
-    marginTop: '18px',
-    paddingTop: '14px',
-    borderTop: '1px solid rgba(255,255,255,0.08)',
-    color: 'rgba(248,245,238,0.72)',
-    lineHeight: 1.6,
-    fontSize: '0.95rem',
-  }}
->
-  Use the character tabs below to open your dashboard, switch builds, or add a new character.
-</div>
+          style={{
+            marginTop: '18px',
+            paddingTop: '14px',
+            borderTop: '1px solid rgba(255,255,255,0.08)',
+            color: 'rgba(248,245,238,0.72)',
+            lineHeight: 1.6,
+            fontSize: '0.95rem',
+          }}
+        >
+          Use the character tabs below to open your dashboard, switch builds, or
+          add a new character.
+        </div>
       </div>
     </section>
   )
