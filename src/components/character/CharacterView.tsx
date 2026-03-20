@@ -365,11 +365,24 @@ export const CharacterView = ({
     </SectionCard>
 
       {/* ===== SUB TABS ===== */}
-      <div className={`flex flex-wrap gap-3 ${isPhone ? 'pt-1' : ''}`}>
-        {[
-          { id: 'setup', label: 'Setup' },
-          { id: 'planner', label: 'Planner' },
-        ].map((tab) => {
+      <div
+  style={{
+    display: 'inline-flex',
+    flexWrap: 'wrap',
+    gap: '8px',
+    padding: '8px',
+    borderRadius: '18px',
+    background: 'rgba(12, 22, 20, 0.58)',
+    border: '1px solid rgba(201,161,90,0.16)',
+    backdropFilter: 'blur(8px)',
+    width: 'fit-content',
+    boxShadow: '0 10px 24px rgba(0,0,0,0.12)',
+  }}
+>
+  {[
+    { id: 'setup', label: 'Setup' },
+    { id: 'planner', label: 'Planner' },
+  ].map((tab) => {
         const isActive = activeSubTab === tab.id
 
           return (
@@ -378,15 +391,17 @@ export const CharacterView = ({
               type="button"
               onClick={() => setActiveSubTab(tab.id as 'setup' | 'planner')}
               className={pillButtonClass}
-              style={{
-                borderColor: isActive
-                  ? 'rgba(201, 161, 90, 0.45)'
-                  :  'rgba(138, 114, 69, 0.18)',
-                background: isActive
-                  ? 'linear-gradient(180deg, rgba(74, 58, 38, 0.94) 0%, rgba(55, 42, 26, 0.98) 100%)'
-                  : 'linear-gradient(180deg, rgba(35, 52, 47, 0.92) 0%, rgba(24, 36, 32, 0.98) 100%)',
-                color: isActive ? 'var(--wwm-gold-soft)' : 'var(--wwm-text)',
-              }}
+style={{
+  minWidth: '120px',
+  borderColor: isActive
+    ? 'rgba(201, 161, 90, 0.42)'
+    : 'rgba(255,255,255,0.08)',
+  background: isActive
+    ? 'linear-gradient(180deg, rgba(74, 58, 38, 0.96) 0%, rgba(55, 42, 26, 0.98) 100%)'
+    : 'rgba(255,255,255,0.06)',
+  color: isActive ? 'var(--wwm-gold-soft)' : 'rgba(248,245,238,0.88)',
+  boxShadow: isActive ? '0 8px 18px rgba(0,0,0,0.16)' : 'none',
+}}
             >
               {tab.label}
             </button>
@@ -412,16 +427,18 @@ export const CharacterView = ({
                     ? 'minmax(0, 1fr)'
                     : 'minmax(320px, 420px) minmax(0, 1fr)',
                   gap: '20px',
-                  alignItems: 'stretch',
+                  alignItems: 'start',
                 }}
               >
                 {/* ===== LEFT COLUMN: SKILL LIST + FILTERS ===== */}
                 <div
-                  style={{
-                    display: 'grid',
-                    gap: '12px',
-                  }}
-                >
+  style={{
+    display: 'grid',
+    gap: '12px',
+    alignContent: 'start',
+    minHeight: 0,
+  }}
+>
                  <div className={`${softPanelClass} grid gap-3 ${isPhone ? 'p-3.5' : 'p-3'}`}>
   <input
     type="text"
@@ -476,14 +493,16 @@ export const CharacterView = ({
   </span>
 </div>
             <div
-                    style={{
-                      display: 'grid',
-                      gap: '10px',
-                      maxHeight: isTablet ? '420px' : '560px',
-                      overflowY: 'auto',
-                      paddingRight: '4px',
-                    }}
-                  >
+  style={{
+    display: 'grid',
+    gap: '10px',
+    maxHeight: isTablet ? '420px' : 'min(560px, calc(100vh - 320px))',
+    overflowY: 'auto',
+    paddingRight: '4px',
+    alignContent: 'start',
+    minHeight: 0,
+  }}
+>
                     {renderSkillList(primeSkillRows, 'Primary Skills')}
                     {renderSkillList(secondarySkillRows, 'Secondary Skills')}
                     {renderSkillList(otherSkillRows, 'Other Mystic Skills')}
@@ -516,7 +535,6 @@ export const CharacterView = ({
                     style={{
                     maxWidth: isTablet ? '100%' : '760px',
                     width: '100%',
-                    minHeight: '90%',
                     minWidth: 0,
                     overflow: 'hidden',
                     backdropFilter: 'blur(6px)',

@@ -1,11 +1,15 @@
 import { useMemo, useRef, useState } from 'react'
 import type { ChangeEvent } from 'react'
+import { NavLink, Routes, Route, useLocation, useNavigate } from 'react-router-dom'
 import { CharacterView } from './components/character/CharacterView'
 import { DashboardView } from './components/dashboard/DashboardView'
 import { ToastProvider } from './components/feedback/ToastProvider'
 import { ToastViewport } from './components/feedback/ToastViewport'
 import { CharacterTabs } from './components/layout/CharacterTabs'
 import { HeaderBar } from './components/layout/HeaderBar'
+import { Footer } from './components/layout/Footer'
+import { PrivacyPolicyView } from './components/legal/PrivacyPolicyView'
+import { HomePage } from './pages/HomePage'
 import {
   createEmptyCharacter,
   emptyIronInventory,
@@ -19,8 +23,7 @@ import {
 import { usePlannerPersistence } from './features/planner/usePlannerPersistence'
 import { useToast } from './hooks/useToast'
 import { usePlannerData } from './hooks/usePlannerData'
-import { Footer } from './components/layout/Footer'
-import { PrivacyPolicyView } from './components/legal/PrivacyPolicyView'
+import { PlannerIntroStrip } from './components/layout/PlannerIntroStrip'
 
 const getNextCharacterName = (existingNames: string[]) => {
   let index = 1
@@ -100,12 +103,278 @@ const applySkillGuardRails = (
   return next
 }
 
+const SiteNav = () => {
+  return (
+    <div
+      style={{
+        maxWidth: '1600px',
+        margin: '0 auto',
+        padding: '0 12px 8px',
+        width: '100%',
+        boxSizing: 'border-box',
+      }}
+    >
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          gap: '12px',
+          flexWrap: 'wrap',
+          borderRadius: '18px',
+          padding: '10px 12px',
+          background: 'rgba(15, 23, 42, 0.55)',
+          border: '1px solid rgba(148, 163, 184, 0.18)',
+          backdropFilter: 'blur(10px)',
+        }}
+      >
+        <div
+          style={{
+            color: 'rgba(226, 232, 240, 0.82)',
+            fontWeight: 600,
+            fontSize: '0.9rem',
+            letterSpacing: '0.03em',
+          }}
+        >
+          Progression-first tools for WWM players
+        </div>
+
+        <div
+          style={{
+            display: 'flex',
+            gap: '10px',
+            flexWrap: 'wrap',
+          }}
+        >
+          <NavLink
+            to="/"
+            end
+            style={({ isActive }) => ({
+              textDecoration: 'none',
+              padding: '8px 14px',
+              borderRadius: '999px',
+              fontWeight: 700,
+              color: isActive ? '#111827' : '#e2e8f0',
+              background: isActive
+                ? 'linear-gradient(180deg, #f5d487 0%, #d4a84f 100%)'
+                : 'rgba(255,255,255,0.06)',
+              border: '1px solid rgba(255,255,255,0.08)',
+            })}
+          >
+            Home
+          </NavLink>
+
+          <NavLink
+            to="/planner"
+            style={({ isActive }) => ({
+              textDecoration: 'none',
+              padding: '8px 14px',
+              borderRadius: '999px',
+              fontWeight: 700,
+              color: isActive ? '#0f172a' : '#e2e8f0',
+              background: isActive
+                ? 'linear-gradient(180deg, #9ddcc8 0%, #4f9b82 100%)'
+                : 'rgba(255,255,255,0.06)',
+              border: '1px solid rgba(255,255,255,0.08)',
+            })}
+          >
+            Planner
+          </NavLink>
+
+          <NavLink
+            to="/privacy"
+            style={({ isActive }) => ({
+              textDecoration: 'none',
+              padding: '8px 14px',
+              borderRadius: '999px',
+              fontWeight: 700,
+              color: isActive ? '#111827' : '#e2e8f0',
+              background: isActive
+                ? 'linear-gradient(180deg, #f5d487 0%, #d4a84f 100%)'
+                : 'rgba(255,255,255,0.06)',
+              border: '1px solid rgba(255,255,255,0.08)',
+            })}
+          >
+            Privacy
+          </NavLink>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+const PlannerContent = ({
+  plannerData,
+  activeTab,
+  setActiveTab,
+  activeCharacter,
+  onAddCharacter,
+  onRenameCharacter,
+  onResetCharacter,
+  onDeleteCharacter,
+  setPlannerData,
+  toast,
+}: {
+  plannerData: ReturnType<typeof usePlannerData>['plannerData']
+  activeTab: string
+  setActiveTab: React.Dispatch<React.SetStateAction<string>>
+  activeCharacter: ReturnType<typeof useMemo<any>>
+  onAddCharacter: () => void
+  onRenameCharacter: () => void
+  onResetCharacter: () => void
+  onDeleteCharacter: () => void
+  setPlannerData: ReturnType<typeof usePlannerData>['setPlannerData']
+  toast: ReturnType<typeof useToast>['toast']
+}) => {
+  return (
+    <>
+  {activeTab === 'dashboard' ? (
+  <PlannerIntroStrip activeTab={activeTab} />
+) : null}
+
+  <CharacterTabs
+        characters={plannerData.characters}
+        activeTab={activeTab}
+        onChangeTab={setActiveTab}
+        onAddCharacter={onAddCharacter}
+        onRenameCharacter={onRenameCharacter}
+        onResetCharacter={onResetCharacter}
+        onDeleteCharacter={onDeleteCharacter}
+      />
+
+      <main
+        style={{
+          maxWidth: '1600px',
+          margin: '0 auto',
+          padding: '20px 12px 28px',
+          width: '100%',
+          boxSizing: 'border-box',
+        }}
+      >
+        {activeTab === 'dashboard' ? (
+          <DashboardView characters={plannerData.characters} />
+        ) : activeCharacter ? (
+          <CharacterView
+            character={activeCharacter}
+            onResetSkill={(skillRowId) => {
+              setPlannerData((current) => ({
+                ...current,
+                characters: current.characters.map((character) =>
+                  character.id === activeCharacter.id
+                    ? {
+                        ...character,
+                        skills: character.skills.map((skill) =>
+                          skill.id === skillRowId
+                            ? {
+                                ...skill,
+                                currentTier: 1,
+                                currentRank: 0,
+                                targetTier: 1,
+                                targetRank: 0,
+                                priority: 'prime',
+                                includeInFarming: false,
+                              }
+                            : skill,
+                        ),
+                      }
+                    : character,
+                ),
+              }))
+            }}
+            onShowToast={toast}
+            onUpdateWorldLevel={(worldLevel) => {
+              setPlannerData((current) => ({
+                ...current,
+                characters: current.characters.map((character) =>
+                  character.id === activeCharacter.id
+                    ? { ...character, worldLevel }
+                    : character,
+                ),
+              }))
+            }}
+            onUpdateMaterialInventory={(materialId, value) => {
+              setPlannerData((current) => ({
+                ...current,
+                characters: current.characters.map((character) =>
+                  character.id === activeCharacter.id
+                    ? {
+                        ...character,
+                        inventory: {
+                          ...character.inventory,
+                          materials: {
+                            ...character.inventory.materials,
+                            [materialId]: value,
+                          },
+                        },
+                      }
+                    : character,
+                ),
+              }))
+            }}
+            onUpdateIronInventory={(ironId, value) => {
+              setPlannerData((current) => ({
+                ...current,
+                characters: current.characters.map((character) =>
+                  character.id === activeCharacter.id
+                    ? {
+                        ...character,
+                        inventory: {
+                          ...character.inventory,
+                          iron: {
+                            ...character.inventory.iron,
+                            [ironId]: value,
+                          },
+                        },
+                      }
+                    : character,
+                ),
+              }))
+            }}
+            onUpdateSkill={(skillRowId, updates) => {
+              setPlannerData((current) => ({
+                ...current,
+                characters: current.characters.map((character) =>
+                  character.id === activeCharacter.id
+                    ? {
+                        ...character,
+                        skills: character.skills.map((skill) =>
+                          skill.id === skillRowId
+                            ? applySkillGuardRails(skill, updates)
+                            : skill,
+                        ),
+                      }
+                    : character,
+                ),
+              }))
+            }}
+          />
+        ) : (
+          <div
+            style={{
+              border: '1px solid #334155',
+              borderRadius: '16px',
+              background: '#0f172a',
+              padding: '24px',
+              color: '#cbd5e1',
+            }}
+          >
+            Character not found.
+          </div>
+        )}
+      </main>
+    </>
+  )
+}
+
 const AppShell = () => {
   const { plannerData, setPlannerData } = usePlannerData()
   const [activeTab, setActiveTab] = useState<string>('dashboard')
-const [activePage, setActivePage] = useState<'planner' | 'privacy'>('planner')
   const importInputRef = useRef<HTMLInputElement | null>(null)
   const { toast } = useToast()
+  const location = useLocation()
+  const navigate = useNavigate()
+
+  const isPrivacyPage = location.pathname === '/privacy'
 
   const { saveState } = usePlannerPersistence({
     plannerData,
@@ -147,6 +416,7 @@ const [activePage, setActivePage] = useState<'planner' | 'privacy'>('planner')
     }))
 
     setActiveTab(newCharacter.id)
+    navigate('/planner')
 
     toast({
       title: 'Character added',
@@ -338,6 +608,7 @@ const [activePage, setActivePage] = useState<'planner' | 'privacy'>('planner')
       }))
 
       setActiveTab(importedPlannerData.characters[0]?.id ?? 'dashboard')
+      navigate('/planner')
 
       toast({
         title: 'Planner imported',
@@ -386,146 +657,50 @@ const [activePage, setActivePage] = useState<'planner' | 'privacy'>('planner')
         onImportJson={handleImportJson}
       />
 
-      {activePage === 'planner' ? (
-  <CharacterTabs
-    characters={plannerData.characters}
-    activeTab={activeTab}
-    onChangeTab={setActiveTab}
-    onAddCharacter={handleAddCharacter}
-    onRenameCharacter={handleRenameCharacter}
-    onResetCharacter={handleResetCharacter}
-    onDeleteCharacter={handleDeleteCharacter}
-  />
-) : null}
+      <SiteNav />
 
-      <main
-  style={{
-    maxWidth: '1600px',
-    margin: '0 auto',
-    padding: '20px 12px 28px',
-    width: '100%',
-    boxSizing: 'border-box',
-  }}
->
-  {activePage === 'privacy' ? (
-    <PrivacyPolicyView />
-  ) : activeTab === 'dashboard' ? (
-    <DashboardView characters={plannerData.characters} />
-  ) : activeCharacter ? (
-    <CharacterView
-      character={activeCharacter}
-      onResetSkill={(skillRowId) => {
-        setPlannerData((current) => ({
-          ...current,
-          characters: current.characters.map((character) =>
-            character.id === activeCharacter.id
-              ? {
-                  ...character,
-                  skills: character.skills.map((skill) =>
-                    skill.id === skillRowId
-                      ? {
-                          ...skill,
-                          currentTier: 1,
-                          currentRank: 0,
-                          targetTier: 1,
-                          targetRank: 0,
-                          priority: 'prime',
-                          includeInFarming: false,
-                        }
-                      : skill,
-                  ),
-                }
-              : character,
-          ),
-        }))
-      }}
-      onShowToast={toast}
-      onUpdateWorldLevel={(worldLevel) => {
-        setPlannerData((current) => ({
-          ...current,
-          characters: current.characters.map((character) =>
-            character.id === activeCharacter.id
-              ? { ...character, worldLevel }
-              : character,
-          ),
-        }))
-      }}
-      onUpdateMaterialInventory={(materialId, value) => {
-        setPlannerData((current) => ({
-          ...current,
-          characters: current.characters.map((character) =>
-            character.id === activeCharacter.id
-              ? {
-                  ...character,
-                  inventory: {
-                    ...character.inventory,
-                    materials: {
-                      ...character.inventory.materials,
-                      [materialId]: value,
-                    },
-                  },
-                }
-              : character,
-          ),
-        }))
-      }}
-      onUpdateIronInventory={(ironId, value) => {
-        setPlannerData((current) => ({
-          ...current,
-          characters: current.characters.map((character) =>
-            character.id === activeCharacter.id
-              ? {
-                  ...character,
-                  inventory: {
-                    ...character.inventory,
-                    iron: {
-                      ...character.inventory.iron,
-                      [ironId]: value,
-                    },
-                  },
-                }
-              : character,
-          ),
-        }))
-      }}
-      onUpdateSkill={(skillRowId, updates) => {
-        setPlannerData((current) => ({
-          ...current,
-          characters: current.characters.map((character) =>
-            character.id === activeCharacter.id
-              ? {
-                  ...character,
-                  skills: character.skills.map((skill) =>
-                    skill.id === skillRowId
-                      ? applySkillGuardRails(skill, updates)
-                      : skill,
-                  ),
-                }
-              : character,
-          ),
-        }))
-      }}
-    />
-  ) : (
-    <div
-      style={{
-        border: '1px solid #334155',
-        borderRadius: '16px',
-        background: '#0f172a',
-        padding: '24px',
-        color: '#cbd5e1',
-      }}
-    >
-      Character not found.
-    </div>
-  )}
-</main>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route
+          path="/planner"
+          element={
+            <PlannerContent
+              plannerData={plannerData}
+              activeTab={activeTab}
+              setActiveTab={setActiveTab}
+              activeCharacter={activeCharacter}
+              onAddCharacter={handleAddCharacter}
+              onRenameCharacter={handleRenameCharacter}
+              onResetCharacter={handleResetCharacter}
+              onDeleteCharacter={handleDeleteCharacter}
+              setPlannerData={setPlannerData}
+              toast={toast}
+            />
+          }
+        />
+        <Route
+          path="/privacy"
+          element={
+            <main
+              style={{
+                maxWidth: '1600px',
+                margin: '0 auto',
+                padding: '20px 12px 28px',
+                width: '100%',
+                boxSizing: 'border-box',
+              }}
+            >
+              <PrivacyPolicyView />
+            </main>
+          }
+        />
+      </Routes>
 
-<Footer
-  onOpenPrivacy={() => setActivePage('privacy')}
-  onOpenPlanner={() => setActivePage('planner')}
-  showBackToPlanner={activePage === 'privacy'}
-/>
+      <Footer
+        onOpenPrivacy={() => navigate('/privacy')}
+        onOpenPlanner={() => navigate('/planner')}
+        showBackToPlanner={isPrivacyPage}
+      />
 
       <ToastViewport />
     </div>

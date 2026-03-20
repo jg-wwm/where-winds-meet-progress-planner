@@ -71,7 +71,7 @@ export const HeaderBar = ({
                   isPhone ? 'text-[11px]' : 'text-sm'
                 } text-[var(--wwm-text-muted)]`}
               >
-                Mystic planning, timers, checklists, and progression tracking
+                Mystic Skill planning, timers, checklists, and progression tracking
               </p>
             </div>
           </div>
